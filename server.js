@@ -11,20 +11,33 @@ const init = async () => {
     port: process.env.PORT || 10000,
     host: "0.0.0.0",
     routes: {
-      cors: {
-        origin: ["https://kanbaneon.netlify.app"],
-        credentials: true
-      },
+      cors: true,
     },
   });
   const url = process.env.DB_URL + process.env.DB_NAME;
 
-  await server.register({
-    plugin: MongoDB,
-    options: {
-      url,
-      decorate: true,
-    },
+  // Retry logic for MongoDB connection
+  async function connectWithRetry(server, options, retries = 5, delay = 15000) {
+    for (let i = 0; i < retries; i++) {
+      try {
+        await server.register({
+          plugin: MongoDB,
+          options,
+        });
+        return; // Success!
+      } catch (err) {
+        if (i === retries - 1) throw err;
+        console.log(
+          `MongoDB connection failed, retrying in ${delay / 1000}s...`
+        );
+        await new Promise((res) => setTimeout(res, delay));
+      }
+    }
+  }
+
+  await connectWithRetry(server, {
+    url,
+    decorate: true,
   });
 
   await server.register([
