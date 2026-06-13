@@ -5,6 +5,7 @@ const {
   deleteWatchList,
 } = require("./notificationService");
 const { requireBoardAccess } = require("./boardAccessService");
+const { prepareNewIssue } = require("./issueService");
 const uuid = require("uuid");
 
 const addCard = async (req, boardId, listId, addingCard, userId) => {
@@ -20,15 +21,21 @@ const addCard = async (req, boardId, listId, addingCard, userId) => {
       return Boom.notFound("List is not found in the board");
     }
 
-    if (addingCard.isWatching) {
-      delete addingCard.isWatching;
-      addingCard.watchers = [...(addingCard.watchers || []), userId];
+    const issueResult = await prepareNewIssue(req, boardId, addingCard);
+    if (issueResult.error) {
+      return Boom.notFound(issueResult.error);
+    }
+    const issueCard = issueResult.card;
+
+    if (issueCard.isWatching) {
+      delete issueCard.isWatching;
+      issueCard.watchers = [...(issueCard.watchers || []), userId];
     } else {
-      delete addingCard.isWatching;
-      addingCard.watchers = [];
+      delete issueCard.isWatching;
+      issueCard.watchers = [];
     }
 
-    updatingList.children.push(addingCard);
+    updatingList.children.push(issueCard);
 
     const collection = req.mongo.db.collection("boards");
     await collection.findOneAndUpdate(
@@ -40,12 +47,12 @@ const addCard = async (req, boardId, listId, addingCard, userId) => {
       { arrayFilters: [{ "xxx.id": listId }] }
     );
 
-    if (addingCard.watchers?.length) {
+    if (issueCard.watchers?.length) {
       await addWatchList(req, userId, {
         id: uuid.v4(),
         boardId,
         listId,
-        cardId: addingCard.id,
+        cardId: issueCard.id,
         type: "card",
         isWatching: true,
         lastModified: new Date(),

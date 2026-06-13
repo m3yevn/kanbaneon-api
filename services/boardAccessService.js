@@ -19,7 +19,15 @@ const getMemberIdsForTeam = async (req, teamId) => {
   return team.members.map((member) => normalizeUserId(member.userId));
 };
 
-const userHasBoardAccess = (board, userId, userTeamIds = []) => {
+const getOrganizationIdsForUser = async (req, userId) => {
+  const collection = req.mongo.db.collection("organizations");
+  const orgs = await collection
+    .find({ "members.userId": normalizeUserId(userId) })
+    .toArray();
+  return orgs.map((org) => org.id);
+};
+
+const userHasBoardAccess = (board, userId, userTeamIds = [], userOrgIds = []) => {
   const uid = normalizeUserId(userId);
   if (normalizeUserId(board.ownedBy) === uid) {
     return true;
@@ -28,6 +36,9 @@ const userHasBoardAccess = (board, userId, userTeamIds = []) => {
     return true;
   }
   if (board.teamId && userTeamIds.includes(board.teamId)) {
+    return true;
+  }
+  if (board.organizationId && userOrgIds.includes(board.organizationId)) {
     return true;
   }
   return false;
@@ -43,7 +54,8 @@ const requireBoardAccess = async (req, boardId, userId) => {
     return { error: Boom.notFound("Board not found") };
   }
   const userTeamIds = await getTeamIdsForUser(req, userId);
-  if (!userHasBoardAccess(board, userId, userTeamIds)) {
+  const userOrgIds = await getOrganizationIdsForUser(req, userId);
+  if (!userHasBoardAccess(board, userId, userTeamIds, userOrgIds)) {
     return { error: Boom.unauthorized("You do not have access to this board") };
   }
   return { board, userTeamIds };
@@ -76,6 +88,7 @@ const syncTeamBoardAccess = async (req, teamId) => {
 module.exports = {
   normalizeUserId,
   getTeamIdsForUser,
+  getOrganizationIdsForUser,
   getMemberIdsForTeam,
   userHasBoardAccess,
   userOwnsBoard,

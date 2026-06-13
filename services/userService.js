@@ -5,6 +5,7 @@ const { sendEmailHTML } = require("./emailService");
 const { readHTMLFile, fillTemplate } = require("./fileService");
 const boardService = require("./boardService");
 const teamService = require("./teamService");
+const organizationService = require("./organizationService");
 
 const deleteUser = async (req, username, password, triggedBy) => {
   try {
@@ -44,6 +45,14 @@ const deleteUser = async (req, username, password, triggedBy) => {
     );
     if (Boom.isBoom(deleteTeamsResult)) {
       return deleteTeamsResult;
+    }
+
+    const deleteOrgsResult = await organizationService.removeUserFromOrganizations(
+      req,
+      clonedUser._id
+    );
+    if (Boom.isBoom(deleteOrgsResult)) {
+      return deleteOrgsResult;
     }
 
     if (deleteBoardsResult.success) {

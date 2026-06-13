@@ -10,12 +10,31 @@ const {
   normalizeUserId,
 } = require("./boardAccessService");
 
-const addBoard = async (req, id, kanbanList, name, ownedBy, teamId) => {
+const addBoard = async (
+  req,
+  id,
+  kanbanList,
+  name,
+  ownedBy,
+  teamId,
+  organizationId,
+  projectKey
+) => {
   try {
     const collection = req.mongo.db.collection("boards");
     let hasAccess = [normalizeUserId(ownedBy)];
 
-    if (teamId) {
+    if (organizationId) {
+      const { requireOrgMembership } = require("./organizationService");
+      const membership = await requireOrgMembership(req, organizationId, ownedBy);
+      if (membership.error) {
+        return membership.error;
+      }
+      const orgMemberIds = membership.organization.members.map((m) =>
+        normalizeUserId(m.userId)
+      );
+      hasAccess = orgMemberIds;
+    } else if (teamId) {
       const membership = await requireTeamMembership(req, teamId, ownedBy);
       if (membership.error) {
         return membership.error;
@@ -24,12 +43,21 @@ const addBoard = async (req, id, kanbanList, name, ownedBy, teamId) => {
       hasAccess = memberIds;
     }
 
+    const key =
+      (projectKey || name || "KAN")
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, "")
+        .slice(0, 6) || "KAN";
+
     const board = {
       id,
       kanbanList,
       name,
       ownedBy: normalizeUserId(ownedBy),
       teamId: teamId || null,
+      organizationId: organizationId || null,
+      projectKey: key,
+      issueCounter: 0,
       hasAccess,
       createdAt: new Date(),
     };
@@ -95,6 +123,7 @@ const getBoards = async (req, userId) => {
   try {
     const collection = req.mongo.db.collection("boards");
     const userTeamIds = await getTeamIdsForUser(req, userId);
+    const userOrgIds = await getOrganizationIdsForUser(req, userId);
     const uid = normalizeUserId(userId);
 
     const boards = await collection
@@ -103,6 +132,7 @@ const getBoards = async (req, userId) => {
           { ownedBy: uid },
           { hasAccess: uid },
           ...(userTeamIds.length ? [{ teamId: { $in: userTeamIds } }] : []),
+          ...(userOrgIds.length ? [{ organizationId: { $in: userOrgIds } }] : []),
         ],
       })
       .toArray();
@@ -128,6 +158,22 @@ const getTeamBoards = async (req, teamId, userId) => {
   }
 };
 
+const getOrganizationBoards = async (req, organizationId, userId) => {
+  try {
+    const { requireOrgMembership } = require("./organizationService");
+    const membership = await requireOrgMembership(req, organizationId, userId);
+    if (membership.error) {
+      return membership.error;
+    }
+
+    const collection = req.mongo.db.collection("boards");
+    const boards = await collection.find({ organizationId }).toArray();
+    return { success: true, boards };
+  } catch (ex) {
+    return Boom.notFound("Getting organization boards failed", ex);
+  }
+};
+
 const getBoard = async (req, id, userId) => {
   try {
     const access = await requireBoardAccess(req, id, userId);
@@ -147,5 +193,6 @@ module.exports = {
   deleteBoards,
   getBoards,
   getTeamBoards,
+  getOrganizationBoards,
   getBoard,
 };

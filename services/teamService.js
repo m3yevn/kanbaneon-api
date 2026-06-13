@@ -38,10 +38,19 @@ const getTeam = async (req, teamId, userId) => {
   }
 };
 
-const addTeam = async (req, id, name, description, members, createdBy) => {
+const addTeam = async (req, id, name, description, members, createdBy, organizationId) => {
   try {
     const collection = req.mongo.db.collection("teams");
     const ownerId = normalizeUserId(createdBy);
+
+    if (organizationId) {
+      const { requireOrgMembership } = require("./organizationService");
+      const membership = await requireOrgMembership(req, organizationId, createdBy);
+      if (membership.error) {
+        return membership.error;
+      }
+    }
+
     const teamMembers = [
       {
         userId: ownerId,
@@ -71,6 +80,7 @@ const addTeam = async (req, id, name, description, members, createdBy) => {
       id,
       name,
       description: description || "",
+      organizationId: organizationId || null,
       createdBy: ownerId,
       members: teamMembers,
       createdAt: new Date(),

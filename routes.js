@@ -11,6 +11,7 @@ const { cardHandler } = require("./handlers/cardHandler");
 const { userHandler } = require("./handlers/userHandler");
 const { notificationHandler } = require("./handlers/notificationHandler");
 const { teamHandler } = require("./handlers/teamHandler");
+const { organizationHandler } = require("./handlers/organizationHandler");
 const { guardJwt } = require("./services/guardService");
 
 const routes = [
@@ -194,6 +195,46 @@ const routes = [
     method: "delete",
     path: "/api/v1/boards/{boardId}/lists/{listId}/cards/{cardId}",
     handler: (req, h) => guardJwt(req, h, cardHandler.deleteById),
+  },
+  {
+    method: "get",
+    path: "/api/v1/organizations/{organizationId}/boards",
+    handler: (req, h) => guardJwt(req, h, boardHandler.getOrganizationBoards),
+  },
+  {
+    method: "post",
+    path: "/api/v1/organizations/{organizationId}/boards",
+    handler: (req, h) => guardJwt(req, h, boardHandler.postOrganizationBoard),
+  },
+  {
+    method: "get",
+    path: "/api/v1/organizations",
+    handler: (req, h) => guardJwt(req, h, organizationHandler.get),
+  },
+  {
+    method: "post",
+    path: "/api/v1/organizations",
+    handler: (req, h) => guardJwt(req, h, organizationHandler.post),
+  },
+  {
+    method: "get",
+    path: "/api/v1/organizations/{organizationId}",
+    handler: (req, h) => guardJwt(req, h, organizationHandler.getById),
+  },
+  {
+    method: "get",
+    path: "/api/v1/organizations/{organizationId}/teams",
+    handler: (req, h) => guardJwt(req, h, organizationHandler.getTeams),
+  },
+  {
+    method: "put",
+    path: "/api/v1/organizations/{organizationId}",
+    handler: (req, h) => guardJwt(req, h, organizationHandler.putById),
+  },
+  {
+    method: "delete",
+    path: "/api/v1/organizations/{organizationId}",
+    handler: (req, h) => guardJwt(req, h, organizationHandler.deleteById),
   },
   {
     method: "get",

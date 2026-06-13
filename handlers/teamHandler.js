@@ -24,12 +24,12 @@ const teamHandler = {
   },
   post: (req) => {
     try {
-      const { id, name, description, members } = parsePayload(req);
+      const { id, name, description, members, organizationId } = parsePayload(req);
       const createdBy = req.triggered_by.id;
       if (!id || !name) {
         return Boom.badRequest("ID or name is empty");
       }
-      return teamService.addTeam(req, id, name, description, members, createdBy);
+      return teamService.addTeam(req, id, name, description, members, createdBy, organizationId);
     } catch (ex) {
       throw new Error(ex);
     }

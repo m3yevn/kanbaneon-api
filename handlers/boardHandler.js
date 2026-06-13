@@ -31,6 +31,15 @@ const boardHandler = {
       throw new Error(ex);
     }
   },
+  getOrganizationBoards: (req) => {
+    try {
+      const organizationId = req.params.organizationId;
+      const userId = req.triggered_by.id;
+      return boardService.getOrganizationBoards(req, organizationId, userId);
+    } catch (ex) {
+      throw new Error(ex);
+    }
+  },
   putById: (req) => {
     try {
       const id = req.params.boardId;
@@ -43,12 +52,21 @@ const boardHandler = {
   },
   post: (req) => {
     try {
-      const { id, kanbanList, name, teamId } = parsePayload(req);
+      const { id, kanbanList, name, teamId, organizationId, projectKey } = parsePayload(req);
       const ownedBy = req.triggered_by.id;
       if (!id || !name) {
         return Boom.badRequest("ID or name is empty");
       }
-      return boardService.addBoard(req, id, kanbanList, name, ownedBy, teamId);
+      return boardService.addBoard(
+        req,
+        id,
+        kanbanList,
+        name,
+        ownedBy,
+        teamId,
+        organizationId,
+        projectKey
+      );
     } catch (ex) {
       throw new Error(ex);
     }
@@ -56,12 +74,43 @@ const boardHandler = {
   postTeamBoard: (req) => {
     try {
       const teamId = req.params.teamId;
-      const { id, kanbanList, name } = parsePayload(req);
+      const { id, kanbanList, name, projectKey } = parsePayload(req);
       const ownedBy = req.triggered_by.id;
       if (!id || !name) {
         return Boom.badRequest("ID or name is empty");
       }
-      return boardService.addBoard(req, id, kanbanList, name, ownedBy, teamId);
+      return boardService.addBoard(
+        req,
+        id,
+        kanbanList,
+        name,
+        ownedBy,
+        teamId,
+        null,
+        projectKey
+      );
+    } catch (ex) {
+      throw new Error(ex);
+    }
+  },
+  postOrganizationBoard: (req) => {
+    try {
+      const organizationId = req.params.organizationId;
+      const { id, kanbanList, name, projectKey } = parsePayload(req);
+      const ownedBy = req.triggered_by.id;
+      if (!id || !name) {
+        return Boom.badRequest("ID or name is empty");
+      }
+      return boardService.addBoard(
+        req,
+        id,
+        kanbanList,
+        name,
+        ownedBy,
+        null,
+        organizationId,
+        projectKey
+      );
     } catch (ex) {
       throw new Error(ex);
     }
