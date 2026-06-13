@@ -4,6 +4,7 @@ const uuid = require("uuid");
 const { sendEmailHTML } = require("./emailService");
 const { readHTMLFile, fillTemplate } = require("./fileService");
 const boardService = require("./boardService");
+const teamService = require("./teamService");
 
 const deleteUser = async (req, username, password, triggedBy) => {
   try {
@@ -36,6 +37,15 @@ const deleteUser = async (req, username, password, triggedBy) => {
     if (Boom.isBoom(deleteBoardsResult)) {
       return deleteBoardsResult;
     }
+
+    const deleteTeamsResult = await teamService.removeUserFromTeams(
+      req,
+      clonedUser._id
+    );
+    if (Boom.isBoom(deleteTeamsResult)) {
+      return deleteTeamsResult;
+    }
+
     if (deleteBoardsResult.success) {
       const profileCollection = req.mongo.db.collection("profiles");
       await profileCollection.findOneAndDelete({
