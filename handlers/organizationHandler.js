@@ -25,6 +25,22 @@ const organizationHandler = {
       req.triggered_by.id
     );
   },
+  postTeam: (req) => {
+    const { id, name, description, members } = parsePayload(req);
+    const teamService = require("../services/teamService");
+    if (!id || !name) {
+      return Boom.badRequest("ID or name is empty");
+    }
+    return teamService.addTeam(
+      req,
+      id,
+      name,
+      description,
+      members,
+      req.triggered_by.id,
+      req.params.organizationId
+    );
+  },
   putById: (req) => {
     const updates = parsePayload(req);
     return organizationService.updateOrganization(

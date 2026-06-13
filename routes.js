@@ -12,6 +12,9 @@ const { userHandler } = require("./handlers/userHandler");
 const { notificationHandler } = require("./handlers/notificationHandler");
 const { teamHandler } = require("./handlers/teamHandler");
 const { organizationHandler } = require("./handlers/organizationHandler");
+const { backlogHandler } = require("./handlers/backlogHandler");
+const { sprintHandler } = require("./handlers/sprintHandler");
+const { commentHandler } = require("./handlers/commentHandler");
 const { guardJwt } = require("./services/guardService");
 
 const routes = [
@@ -198,6 +201,51 @@ const routes = [
   },
   {
     method: "get",
+    path: "/api/v1/boards/{boardId}/backlog",
+    handler: (req, h) => guardJwt(req, h, backlogHandler.get),
+  },
+  {
+    method: "post",
+    path: "/api/v1/boards/{boardId}/backlog/reorder",
+    handler: (req, h) => guardJwt(req, h, backlogHandler.reorder),
+  },
+  {
+    method: "get",
+    path: "/api/v1/boards/{boardId}/sprints",
+    handler: (req, h) => guardJwt(req, h, sprintHandler.get),
+  },
+  {
+    method: "post",
+    path: "/api/v1/boards/{boardId}/sprints",
+    handler: (req, h) => guardJwt(req, h, sprintHandler.post),
+  },
+  {
+    method: "post",
+    path: "/api/v1/boards/{boardId}/sprints/{sprintId}/assign",
+    handler: (req, h) => guardJwt(req, h, sprintHandler.assign),
+  },
+  {
+    method: "post",
+    path: "/api/v1/boards/{boardId}/sprints/{sprintId}/start",
+    handler: (req, h) => guardJwt(req, h, sprintHandler.start),
+  },
+  {
+    method: "get",
+    path: "/api/v1/boards/{boardId}/sprints/{sprintId}/issues",
+    handler: (req, h) => guardJwt(req, h, sprintHandler.getIssues),
+  },
+  {
+    method: "get",
+    path: "/api/v1/boards/{boardId}/lists/{listId}/cards/{cardId}/comments",
+    handler: (req, h) => guardJwt(req, h, commentHandler.get),
+  },
+  {
+    method: "post",
+    path: "/api/v1/boards/{boardId}/lists/{listId}/cards/{cardId}/comments",
+    handler: (req, h) => guardJwt(req, h, commentHandler.post),
+  },
+  {
+    method: "get",
     path: "/api/v1/organizations/{organizationId}/boards",
     handler: (req, h) => guardJwt(req, h, boardHandler.getOrganizationBoards),
   },
@@ -225,6 +273,11 @@ const routes = [
     method: "get",
     path: "/api/v1/organizations/{organizationId}/teams",
     handler: (req, h) => guardJwt(req, h, organizationHandler.getTeams),
+  },
+  {
+    method: "post",
+    path: "/api/v1/organizations/{organizationId}/teams",
+    handler: (req, h) => guardJwt(req, h, organizationHandler.postTeam),
   },
   {
     method: "put",

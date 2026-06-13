@@ -10,19 +10,21 @@ Jira-inspired project management API (Hapi + MongoDB).
 | **Boards & cards** | CRUD, drag-drop swap internal/external, watchers |
 | **Teams** | CRUD, members, `GET/POST /teams/{id}/boards` |
 | **Board access** | Owner, `hasAccess[]`, team membership |
-| **Organizations** | CRUD, members, `GET/POST /organizations/{id}/boards` |
-| **Jira issues** | `projectKey`, `issueKey` (`KAN-1`), type, priority, assignee on cards |
+| **Organizations** | CRUD, members, `GET/POST /organizations/{id}/boards`, `POST /organizations/{id}/teams` |
+| **Jira issues** | `projectKey`, `issueKey`, type, priority, assignee on cards |
+| **Backlog** | `GET /boards/{id}/backlog`, `POST .../backlog/reorder`, `backlogRank` on cards |
+| **Sprints** | `GET/POST /boards/{id}/sprints`, assign, start, sprint issues |
+| **Comments** | `GET/POST .../cards/{id}/comments` embedded on issues |
 
 ## Next slices
 
 | # | Slice | Scope |
 |---|-------|-------|
-| 4 | **Sprints** | Sprint entity, backlog vs active sprint columns |
-| 5 | **Issue search** | `GET /issues?q=` filter by key, type, assignee |
-| 6 | **Epic linking** | Parent epic on cards, epic board rollup |
-| 7 | **Comments & activity** | Issue comments, audit log |
-| 8 | **Notifications** | Webhooks / email on assignee change |
-| 9 | **Permissions** | Org roles (admin/member/viewer), project-level ACL |
+| 9 | **Issue search** | `GET /issues?q=` filter by key, type, assignee |
+| 10 | **Epic linking** | Parent epic on cards, epic board rollup |
+| 11 | **Activity log** | Audit trail beyond comments |
+| 12 | **Notifications** | Webhooks / email on assignee change |
+| 13 | **Permissions** | Org roles (admin/member/viewer), project-level ACL |
 
 ## Data model (Jira)
 

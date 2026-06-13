@@ -6,6 +6,7 @@ const {
 } = require("./notificationService");
 const { requireBoardAccess } = require("./boardAccessService");
 const { prepareNewIssue } = require("./issueService");
+const { isBacklogList } = require("./boardHelpers");
 const uuid = require("uuid");
 
 const addCard = async (req, boardId, listId, addingCard, userId) => {
@@ -26,6 +27,12 @@ const addCard = async (req, boardId, listId, addingCard, userId) => {
       return Boom.notFound(issueResult.error);
     }
     const issueCard = issueResult.card;
+
+    if (isBacklogList(updatingList)) {
+      issueCard.backlogRank = updatingList.children.length;
+      issueCard.sprintId = null;
+    }
+    issueCard.comments = issueCard.comments || [];
 
     if (issueCard.isWatching) {
       delete issueCard.isWatching;

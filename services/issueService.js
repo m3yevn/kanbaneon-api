@@ -51,6 +51,9 @@ const prepareNewIssue = async (req, boardId, card) => {
       priority: PRIORITIES.includes(card.priority) ? card.priority : "medium",
       assigneeId: card.assigneeId || null,
       assigneeUsername: card.assigneeUsername || null,
+      sprintId: card.sprintId || null,
+      comments: card.comments || [],
+      backlogRank: card.backlogRank ?? null,
     },
     board: { ...board, issueCounter: issueNumber },
   };

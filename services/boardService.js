@@ -58,6 +58,8 @@ const addBoard = async (
       organizationId: organizationId || null,
       projectKey: key,
       issueCounter: 0,
+      sprints: [],
+      activeSprintId: null,
       hasAccess,
       createdAt: new Date(),
     };
