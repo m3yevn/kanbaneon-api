@@ -52,6 +52,8 @@ const prepareNewIssue = async (req, boardId, card) => {
       assigneeId: card.assigneeId || null,
       assigneeUsername: card.assigneeUsername || null,
       sprintId: card.sprintId || null,
+      epicId: card.epicId || null,
+      parentEpicKey: card.parentEpicKey || null,
       comments: card.comments || [],
       backlogRank: card.backlogRank ?? null,
     },

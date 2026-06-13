@@ -15,6 +15,7 @@ const { organizationHandler } = require("./handlers/organizationHandler");
 const { backlogHandler } = require("./handlers/backlogHandler");
 const { sprintHandler } = require("./handlers/sprintHandler");
 const { commentHandler } = require("./handlers/commentHandler");
+const { issueHandler } = require("./handlers/issueHandler");
 const { guardJwt } = require("./services/guardService");
 
 const routes = [
@@ -243,6 +244,26 @@ const routes = [
     method: "post",
     path: "/api/v1/boards/{boardId}/lists/{listId}/cards/{cardId}/comments",
     handler: (req, h) => guardJwt(req, h, commentHandler.post),
+  },
+  {
+    method: "get",
+    path: "/api/v1/boards/{boardId}/issues/search",
+    handler: (req, h) => guardJwt(req, h, issueHandler.search),
+  },
+  {
+    method: "get",
+    path: "/api/v1/boards/{boardId}/epics",
+    handler: (req, h) => guardJwt(req, h, issueHandler.getEpics),
+  },
+  {
+    method: "get",
+    path: "/api/v1/boards/{boardId}/epics/{epicId}/children",
+    handler: (req, h) => guardJwt(req, h, issueHandler.getEpicChildren),
+  },
+  {
+    method: "post",
+    path: "/api/v1/boards/{boardId}/lists/{listId}/cards/{cardId}/epic",
+    handler: (req, h) => guardJwt(req, h, issueHandler.linkEpic),
   },
   {
     method: "get",

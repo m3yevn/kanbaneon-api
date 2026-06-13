@@ -15,13 +15,13 @@ Jira-inspired project management API (Hapi + MongoDB).
 | **Backlog** | `GET /boards/{id}/backlog`, `POST .../backlog/reorder`, `backlogRank` on cards |
 | **Sprints** | `GET/POST /boards/{id}/sprints`, assign, start, sprint issues |
 | **Comments** | `GET/POST .../cards/{id}/comments` embedded on issues |
+| **Issue search** | `GET /boards/{id}/issues/search?q=&issueType=&priority=&epicId=` |
+| **Epic linking** | `GET /epics`, `POST .../epic`, `GET /epics/{id}/children` |
 
 ## Next slices
 
 | # | Slice | Scope |
 |---|-------|-------|
-| 9 | **Issue search** | `GET /issues?q=` filter by key, type, assignee |
-| 10 | **Epic linking** | Parent epic on cards, epic board rollup |
 | 11 | **Activity log** | Audit trail beyond comments |
 | 12 | **Notifications** | Webhooks / email on assignee change |
 | 13 | **Permissions** | Org roles (admin/member/viewer), project-level ACL |
