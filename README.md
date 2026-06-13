@@ -1,60 +1,54 @@
-# Kanbaneon-api
+# Kanbaneon API
 
-**Kanbaneon API server**
+**REST API server for Kanbaneon** — Hapi.js + MongoDB.
 
-<p>Version 1.0.0</p>
-<p>by m3yevn</p>
+Version 1.0.0 · by m3yevn
 
-<hr/>
+## Tech stack
 
+| Layer | Stack |
+|-------|-------|
+| Framework | Hapi.js |
+| Database | MongoDB |
+| Auth | JWT (jsonwebtoken, bcrypt) |
 
+## API areas
 
+- **Auth** — login, signup, reauth, password recovery
+- **Profile** — user details, avatar, username search
+- **Boards** — CRUD, lists, cards, drag-and-drop swaps
+- **Teams** — CRUD, members, team-scoped boards with `hasAccess` sync
+- **Notifications** — watch lists for cards/boards
 
-
-## ⭐ Public Url
-
-N.A
-
-## 📚 Tech Stack
-
-N.A
-
-## 📸 Screenshots
-
-N.A
-
-## 📜 Scripts
-
-```sh
-test : $ echo "Error: no test specified" && exit 1
+## Key endpoints
 
 ```
+GET/POST        /api/v1/boards
+GET/PUT/DELETE  /api/v1/boards/{boardId}
+GET/POST        /api/v1/teams
+GET/PUT/DELETE  /api/v1/teams/{teamId}
+GET/POST        /api/v1/teams/{teamId}/boards
+POST/DELETE     /api/v1/teams/{teamId}/members[/{userId}]
+GET             /healthz
+```
 
-## 🔑 Keywords
+## Scripts
 
-Kanbaneon,API,server
+```sh
+npm start        # Start server (see server.js)
+```
 
-## 👾 Submit issues at
+## Environment
+
+```env
+MONGODB_URI=...
+JWT_SECRET=...
+```
+
+## Issues
 
 https://github.com/Kanbaneon/kanbaneon-api/issues
 
-## ©️ License
+## License
 
 ISC
-
-## Dependencies
-
-This project does not have dependencies
-
-## Dev Dependencies
-
-This project does not have dev dependencies
-
-<img src="https://cdn.dribbble.com/users/2401141/screenshots/5487982/developers-gif-showcase.gif"/>
-
-## Documentations
-
-
-
-<hr/>
-Happy Coding!

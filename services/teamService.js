@@ -1,6 +1,5 @@
 const Boom = require("boom");
-
-const normalizeUserId = (userId) => String(userId);
+const { syncTeamBoardAccess, normalizeUserId } = require("./boardAccessService");
 
 const isTeamMember = (team, userId) =>
   team.members.some((member) => normalizeUserId(member.userId) === normalizeUserId(userId));
@@ -168,6 +167,8 @@ const addMember = async (req, teamId, member, userId) => {
       }
     );
 
+    await syncTeamBoardAccess(req, teamId);
+
     return { success: true };
   } catch (ex) {
     return Boom.notImplemented("Adding team member failed", ex);
@@ -201,6 +202,8 @@ const removeMember = async (req, teamId, memberUserId, userId) => {
         $currentDate: { lastModified: true },
       }
     );
+
+    await syncTeamBoardAccess(req, teamId);
 
     return { success: true };
   } catch (ex) {

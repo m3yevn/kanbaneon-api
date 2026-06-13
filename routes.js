@@ -121,6 +121,16 @@ const routes = [
     handler: (req, h) => guardJwt(req, h, boardHandler.get),
   },
   {
+    method: "get",
+    path: "/api/v1/teams/{teamId}/boards",
+    handler: (req, h) => guardJwt(req, h, boardHandler.getTeamBoards),
+  },
+  {
+    method: "post",
+    path: "/api/v1/teams/{teamId}/boards",
+    handler: (req, h) => guardJwt(req, h, boardHandler.postTeamBoard),
+  },
+  {
     method: "post",
     path: "/api/v1/boards",
     handler: (req, h) => guardJwt(req, h, boardHandler.post),

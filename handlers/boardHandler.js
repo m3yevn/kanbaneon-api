@@ -1,56 +1,76 @@
 const Boom = require("boom");
 const boardService = require("../services/boardService");
 
+const parsePayload = (req) =>
+  typeof req?.payload === "string" ? JSON.parse(req.payload) : req.payload;
+
 const boardHandler = {
-  get: (req, h) => {
+  get: (req) => {
     try {
-      const ownedBy = req.triggered_by.id;
-      return boardService.getBoards(req, ownedBy);
+      const userId = req.triggered_by.id;
+      return boardService.getBoards(req, userId);
     } catch (ex) {
       throw new Error(ex);
     }
   },
-  getById: (req, h) => {
+  getById: (req) => {
     try {
       const id = req.params.boardId;
-      return boardService.getBoard(req, id);
+      const userId = req.triggered_by.id;
+      return boardService.getBoard(req, id, userId);
     } catch (ex) {
       throw new Error(ex);
     }
   },
-  putById: (req, h) => {
+  getTeamBoards: (req) => {
+    try {
+      const teamId = req.params.teamId;
+      const userId = req.triggered_by.id;
+      return boardService.getTeamBoards(req, teamId, userId);
+    } catch (ex) {
+      throw new Error(ex);
+    }
+  },
+  putById: (req) => {
     try {
       const id = req.params.boardId;
-      const ownedBy = req.triggered_by.id;
-      const board =
-        typeof req?.payload === "string"
-          ? JSON.parse(req.payload)
-          : req.payload;
-      return boardService.updateBoard(req, id, board, ownedBy);
+      const userId = req.triggered_by.id;
+      const board = parsePayload(req);
+      return boardService.updateBoard(req, id, board, userId);
     } catch (ex) {
       throw new Error(ex);
     }
   },
-  post: (req, h) => {
+  post: (req) => {
     try {
-      const { id, kanbanList, name } =
-        typeof req?.payload === "string"
-          ? JSON.parse(req.payload)
-          : req.payload;
+      const { id, kanbanList, name, teamId } = parsePayload(req);
       const ownedBy = req.triggered_by.id;
-      if (!id || !id) {
+      if (!id || !name) {
         return Boom.badRequest("ID or name is empty");
       }
-      return boardService.addBoard(req, id, kanbanList, name, ownedBy);
+      return boardService.addBoard(req, id, kanbanList, name, ownedBy, teamId);
     } catch (ex) {
       throw new Error(ex);
     }
   },
-  deleteById: (req, h) => {
+  postTeamBoard: (req) => {
+    try {
+      const teamId = req.params.teamId;
+      const { id, kanbanList, name } = parsePayload(req);
+      const ownedBy = req.triggered_by.id;
+      if (!id || !name) {
+        return Boom.badRequest("ID or name is empty");
+      }
+      return boardService.addBoard(req, id, kanbanList, name, ownedBy, teamId);
+    } catch (ex) {
+      throw new Error(ex);
+    }
+  },
+  deleteById: (req) => {
     try {
       const id = req.params.boardId;
-      const ownedBy = req.triggered_by.id;
-      return boardService.deleteBoard(req, id, ownedBy);
+      const userId = req.triggered_by.id;
+      return boardService.deleteBoard(req, id, userId);
     } catch (ex) {
       throw new Error(ex);
     }
