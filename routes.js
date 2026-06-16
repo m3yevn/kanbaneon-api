@@ -15,6 +15,7 @@ const { organizationHandler } = require("./handlers/organizationHandler");
 const { backlogHandler } = require("./handlers/backlogHandler");
 const { sprintHandler } = require("./handlers/sprintHandler");
 const { commentHandler } = require("./handlers/commentHandler");
+const { activityHandler } = require("./handlers/activityHandler");
 const { issueHandler } = require("./handlers/issueHandler");
 const { guardJwt } = require("./services/guardService");
 
@@ -244,6 +245,11 @@ const routes = [
     method: "post",
     path: "/api/v1/boards/{boardId}/lists/{listId}/cards/{cardId}/comments",
     handler: (req, h) => guardJwt(req, h, commentHandler.post),
+  },
+  {
+    method: "get",
+    path: "/api/v1/boards/{boardId}/lists/{listId}/cards/{cardId}/activity",
+    handler: (req, h) => guardJwt(req, h, activityHandler.get),
   },
   {
     method: "get",

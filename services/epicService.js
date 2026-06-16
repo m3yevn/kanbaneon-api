@@ -1,6 +1,7 @@
 const Boom = require("boom");
 const { requireBoardAccess } = require("./boardAccessService");
 const { flattenIssues } = require("./issueSearchService");
+const { createEntry } = require("./activityService");
 
 const getEpics = async (req, boardId, userId) => {
   try {
@@ -19,7 +20,7 @@ const getEpics = async (req, boardId, userId) => {
   }
 };
 
-const linkToEpic = async (req, boardId, listId, cardId, epicId, userId) => {
+const linkToEpic = async (req, boardId, listId, cardId, epicId, userId, username = "user") => {
   try {
     const access = await requireBoardAccess(req, boardId, userId);
     if (access.error) {
@@ -48,6 +49,12 @@ const linkToEpic = async (req, boardId, listId, cardId, epicId, userId) => {
       ...list.children[cardIndex],
       epicId,
       parentEpicKey: epicIssue.issueKey,
+      activity: [
+        ...(list.children[cardIndex].activity || []),
+        createEntry("epic_linked", userId, username, {
+          meta: { epicId, epicKey: epicIssue.issueKey },
+        }),
+      ],
     };
 
     const collection = req.mongo.db.collection("boards");

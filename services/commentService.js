@@ -1,6 +1,7 @@
 const Boom = require("boom");
 const uuid = require("uuid");
 const { requireBoardAccess } = require("./boardAccessService");
+const { createEntry } = require("./activityService");
 
 const getComments = async (req, boardId, listId, cardId, userId) => {
   try {
@@ -53,6 +54,10 @@ const addComment = async (req, boardId, listId, cardId, text, userId, username) 
     const updatedCard = {
       ...card,
       comments: [...(card.comments || []), comment],
+      activity: [
+        ...(card.activity || []),
+        createEntry("comment_added", userId, username, { text }),
+      ],
     };
 
     const collection = req.mongo.db.collection("boards");

@@ -12,7 +12,14 @@ const cardHandler = {
           : req.payload;
       const ownedBy = req.triggered_by.id;
 
-      return cardService.addCard(req, boardId, listId, addingCard, ownedBy);
+      return cardService.addCard(
+        req,
+        boardId,
+        listId,
+        addingCard,
+        ownedBy,
+        req.triggered_by.username
+      );
     } catch (ex) {
       throw new Error(ex);
     }
@@ -33,7 +40,8 @@ const cardHandler = {
         listId,
         cardId,
         card,
-        triggeredBy
+        triggeredBy,
+        req.triggered_by.username
       );
     } catch (ex) {
       throw new Error(ex);

@@ -17,12 +17,12 @@ Jira-inspired project management API (Hapi + MongoDB).
 | **Comments** | `GET/POST .../cards/{id}/comments` embedded on issues |
 | **Issue search** | `GET /boards/{id}/issues/search?q=&issueType=&priority=&epicId=` |
 | **Epic linking** | `GET /epics`, `POST .../epic`, `GET /epics/{id}/children` |
+| **Activity log** | `GET .../cards/{id}/activity` — field changes, comments, epic links |
 
 ## Next slices
 
 | # | Slice | Scope |
 |---|-------|-------|
-| 11 | **Activity log** | Audit trail beyond comments |
 | 12 | **Notifications** | Webhooks / email on assignee change |
 | 13 | **Permissions** | Org roles (admin/member/viewer), project-level ACL |
 

@@ -7,9 +7,10 @@ const {
 const { requireBoardAccess } = require("./boardAccessService");
 const { prepareNewIssue } = require("./issueService");
 const { isBacklogList } = require("./boardHelpers");
+const { createEntry, diffCardFields } = require("./activityService");
 const uuid = require("uuid");
 
-const addCard = async (req, boardId, listId, addingCard, userId) => {
+const addCard = async (req, boardId, listId, addingCard, userId, username = "user") => {
   try {
     const access = await requireBoardAccess(req, boardId, userId);
     if (access.error) {
@@ -33,6 +34,9 @@ const addCard = async (req, boardId, listId, addingCard, userId) => {
       issueCard.sprintId = null;
     }
     issueCard.comments = issueCard.comments || [];
+    issueCard.activity = [
+      createEntry("issue_created", userId, username),
+    ];
 
     if (issueCard.isWatching) {
       delete issueCard.isWatching;
@@ -72,11 +76,22 @@ const addCard = async (req, boardId, listId, addingCard, userId) => {
   }
 };
 
-const updateCard = async (req, boardId, listId, cardId, card, triggeredBy) => {
+const updateCard = async (req, boardId, listId, cardId, card, triggeredBy, username = "user") => {
   try {
     const access = await requireBoardAccess(req, boardId, triggeredBy);
     if (access.error) {
       return access.error;
+    }
+
+    const list = access.board.kanbanList.find((l) => l.id === listId);
+    const oldCard = list?.children.find((c) => c.id === cardId);
+    if (oldCard) {
+      const changes = diffCardFields(oldCard, card, triggeredBy, username);
+      if (changes.length) {
+        card.activity = [...(oldCard.activity || []), ...changes];
+      } else {
+        card.activity = oldCard.activity || [];
+      }
     }
 
     if (card.isWatching) {

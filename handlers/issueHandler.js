@@ -30,7 +30,8 @@ const issueHandler = {
       req.params.listId,
       req.params.cardId,
       payload.epicId,
-      req.triggered_by.id
+      req.triggered_by.id,
+      req.triggered_by.username
     );
   },
   getEpicChildren: (req) =>
