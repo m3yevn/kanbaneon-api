@@ -41,8 +41,18 @@ npm start        # Start server (see server.js)
 ## Environment
 
 ```env
-MONGODB_URI=...
+DB_URL=mongodb+srv://...
+DB_NAME=kanbaneon
 JWT_SECRET=...
+```
+
+## Deploy
+
+Production: [kanbaneon-api.vercel.app](https://kanbaneon-api.vercel.app) (Vercel serverless + `@vercel/node`).
+
+```sh
+vercel link --yes --project kanbaneon-api
+vercel --prod
 ```
 
 ## Issues
