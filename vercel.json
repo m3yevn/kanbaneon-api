@@ -9,6 +9,7 @@
     { "src": "/health", "dest": "/api/health.js" },
     { "src": "/healthz", "dest": "/api/health.js" },
     { "src": "/", "dest": "public/hello.html" },
+    { "src": "/docs", "dest": "public/docs.html" },
     { "src": "/public/(.*)", "dest": "public/$1" },
     { "src": "/(.*)", "dest": "server.js" }
   ]

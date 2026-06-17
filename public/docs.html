@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>API Reference — Kanbaneon</title>
+  <meta name="description" content="Kanbaneon REST API — boards, backlog, sprints, epics, teams, organizations." />
+  <link rel="canonical" href="https://kanbaneon-api.vercel.app/docs" />
+  <style>
+    :root { --bg: #f7f8f4; --card: #fff; --text: #1a1a1a; --muted: #5c6b4a; --accent: #84cc16; --border: #e2e8d6; --code: #0f172a; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    header { border-bottom: 1px solid var(--border); background: var(--card); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    header a { color: var(--muted); text-decoration: none; margin-left: 1rem; }
+    header a:hover { color: var(--text); }
+    .logo { font-weight: 700; color: var(--text); text-decoration: none; }
+    .logo span { color: var(--accent); }
+    main { max-width: 920px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    h1 { font-size: 2rem; margin: 0 0 0.5rem; }
+    .lead { color: var(--muted); margin-bottom: 2rem; }
+    h2 { margin-top: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.92rem; }
+    th, td { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; }
+    code { font-family: "JetBrains Mono", monospace; font-size: 0.85em; background: #eef2e6; padding: 0.15em 0.4em; border-radius: 4px; }
+    pre { background: var(--code); color: #e2e8f0; padding: 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
+    .badge { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 0.15rem 0.45rem; border-radius: 4px; margin-right: 0.35rem; }
+    .post { background: #dbeafe; color: #1e40af; }
+    .get { background: #dcfce7; color: #166534; }
+    .put { background: #fef3c7; color: #92400e; }
+    .del { background: #fee2e2; color: #991b1b; }
+    .pub { color: var(--muted); font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="logo" href="/">Kanban<span>eon</span> API</a>
+    <nav>
+      <a href="https://kanbaneon.vercel.app">Web app</a>
+      <a href="/health">Health</a>
+      <a href="https://github.com/m3yevn/kanbaneon-api">GitHub</a>
+    </nav>
+  </header>
+  <main>
+    <h1>API Reference</h1>
+    <p class="lead">Hapi.js + MongoDB · JWT auth · Jira-style boards, backlog, sprints, epics.</p>
+    <p>Base URL: <code>https://kanbaneon-api.vercel.app</code></p>
+
+    <h2>Auth</h2>
+    <p>Most routes require <code>Authorization: Bearer &lt;token&gt;</code> from login or signup.</p>
+    <pre>POST /api/v1/login   { "email", "password" }
+POST /api/v1/signup  { "email", "password", "displayName" }
+GET  /api/v1/profile</pre>
+
+    <h2>Boards &amp; cards</h2>
+    <table>
+      <thead><tr><th>Method</th><th>Path</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge get">GET</span></td><td><code>/api/v1/boards</code></td><td>List boards</td></tr>
+        <tr><td><span class="badge post">POST</span></td><td><code>/api/v1/boards</code></td><td>Create board</td></tr>
+        <tr><td><span class="badge get">GET</span></td><td><code>/api/v1/boards/{boardId}</code></td><td>Board + lists + cards</td></tr>
+        <tr><td><span class="badge put">PUT</span></td><td><code>/api/v1/boards/{boardId}</code></td><td>Update board</td></tr>
+        <tr><td><span class="badge post">POST</span></td><td><code>/api/v1/boards/{boardId}/lists/{listId}/cards</code></td><td>Create card</td></tr>
+        <tr><td><span class="badge put">PUT</span></td><td><code>/api/v1/boards/{boardId}/lists/{listId}/cards/{cardId}</code></td><td>Update card / issue</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Backlog &amp; sprints</h2>
+    <table>
+      <thead><tr><th>Method</th><th>Path</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge get">GET</span></td><td><code>/api/v1/boards/{boardId}/backlog</code></td></tr>
+        <tr><td><span class="badge post">POST</span></td><td><code>/api/v1/boards/{boardId}/backlog/reorder</code></td></tr>
+        <tr><td><span class="badge get">GET</span></td><td><code>/api/v1/boards/{boardId}/sprints</code></td></tr>
+        <tr><td><span class="badge post">POST</span></td><td><code>/api/v1/boards/{boardId}/sprints</code></td></tr>
+        <tr><td><span class="badge get">GET</span></td><td><code>/api/v1/boards/{boardId}/issues/search?q=</code></td></tr>
+      </tbody>
+    </table>
+
+    <h2>Epics &amp; activity</h2>
+    <table>
+      <thead><tr><th>Method</th><th>Path</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge get">GET</span></td><td><code>/api/v1/boards/{boardId}/epics</code></td></tr>
+        <tr><td><span class="badge post">POST</span></td><td><code>/api/v1/boards/{boardId}/lists/{listId}/cards/{cardId}/epic</code></td></tr>
+        <tr><td><span class="badge get">GET</span></td><td><code>/api/v1/boards/{boardId}/activity</code></td></tr>
+      </tbody>
+    </table>
+
+    <h2>Teams &amp; organizations</h2>
+    <table>
+      <thead><tr><th>Method</th><th>Path</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge get">GET</span></td><td><code>/api/v1/teams</code></td></tr>
+        <tr><td><span class="badge post">POST</span></td><td><code>/api/v1/teams</code></td></tr>
+        <tr><td><span class="badge get">GET</span></td><td><code>/api/v1/organizations</code></td></tr>
+        <tr><td><span class="badge post">POST</span></td><td><code>/api/v1/organizations</code></td></tr>
+      </tbody>
+    </table>
+
+    <h2>Health</h2>
+    <p class="pub"><span class="badge get">GET</span> <code>/health</code> · <code>/healthz</code> — no auth</p>
+  </main>
+</body>
+</html>

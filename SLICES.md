@@ -18,6 +18,7 @@ Jira-inspired project management API (Hapi + MongoDB).
 | **Issue search** | `GET /boards/{id}/issues/search?q=&issueType=&priority=&epicId=` |
 | **Epic linking** | `GET /epics`, `POST .../epic`, `GET /epics/{id}/children` |
 | **Activity log** | `GET .../cards/{id}/activity` — field changes, comments, epic links |
+| **API reference** | `/docs` static reference on Vercel |
 
 ## Next slices
 
